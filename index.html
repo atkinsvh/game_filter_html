@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. NeuroTat's Game Filter</title>
+  <style>
+    body {
+      font-family: 'American Typewriter', serif;
+      background-color: white;
+      color: red;
+      padding: 20px;
+      text-align: center;
+    }
+    select, button {
+      font-family: 'American Typewriter', serif;
+      font-size: 16px;
+      margin: 10px;
+      padding: 5px;
+    }
+    #output {
+      margin-top: 20px;
+      background-color: #f4f4f4;
+      color: black;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Dr. NeuroTat's Game Filter</h1>
+
+  <label for="console">Console:</label>
+  <select id="console">
+    <option value="Nintendo+Switch">Switch</option>
+    <option value="PlayStation+5">PS5</option>
+    <option value="Xbox+Series+X">Xbox Series X</option>
+    <option value="Nintendo+GameCube">GameCube</option>
+    <option value="Nintendo+64">N64</option>
+    <option value="Wii">Wii</option>
+    <option value="PSP">PSP</option>
+  </select>
+
+  <label for="mood">Mood:</label>
+  <select id="mood">
+    <option value="Low">Low</option>
+    <option value="High">High</option>
+    <option value="Both">Both</option>
+  </select>
+
+  <br />
+  <button onclick="fetchGames()">Show Games</button>
+  <button onclick="suggestGame()">Suggest Game Now</button>
+
+  <div id="output">Game suggestions will appear here.</div>
+
+  <script>
+    async function fetchGames() {
+      const console = document.getElementById("console").value;
+      const mood = document.getElementById("mood").value;
+      const response = await fetch(`https://api.rawg.io/api/games?search=${console}&page_size=5&key=YOUR_RAWG_API_KEY`);
+      const data = await response.json();
+      let results = `<strong>Games for ${console} (${mood} mood):</strong><br/><ul>`;
+      data.results.forEach(game => {
+        const exclusive = game.platforms.length === 1 ? "Yes" : "No";
+        results += `<li>${game.name} — Exclusive: ${exclusive}</li>`;
+      });
+      results += "</ul>";
+      document.getElementById("output").innerHTML = results;
+    }
+
+    async function suggestGame() {
+      const now = new Date();
+      const hour = now.getHours();
+      let timeOfDay = 'Evening';
+      if (hour < 12) timeOfDay = 'Morning';
+      else if (hour < 17) timeOfDay = 'Afternoon';
+
+      const consoles = ["Nintendo+Switch", "PlayStation+5", "Xbox+Series+X"];
+      const pick = consoles[Math.floor(Math.random() * consoles.length)];
+      const response = await fetch(`https://api.rawg.io/api/games?search=${pick}&page_size=1&key=YOUR_RAWG_API_KEY`);
+      const data = await response.json();
+      const game = data.results[0];
+      document.getElementById("output").innerHTML = `<strong>Suggested Game (${timeOfDay}):</strong><br/>${game.name} on ${pick.replace('+', ' ')}`;
+    }
+  </script>
+</body>
+</html>

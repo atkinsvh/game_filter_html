@@ -95,7 +95,7 @@
 
       const consoles = ["Nintendo+Switch", "PlayStation+2","PlayStation+5", "Xbox+Series+X"];
       const pick = consoles[Math.floor(Math.random() * consoles.length)];
-      const response = await fetch(`https://api.rawg.io/api/games?search=${pick}&page_size=1&key=${apiKey}`);
+      const response = await fetch(`https://api.rawg.io/api/games?search=${pick}&page_size=4&key=${apiKey}`);
       const data = await response.json();
       const game = data.results[0];
       document.getElementById("output").innerHTML = `<strong>Suggested Game (${timeOfDay}):</strong><br/>${game.name} on ${pick.replace('+', ' ')}`;
